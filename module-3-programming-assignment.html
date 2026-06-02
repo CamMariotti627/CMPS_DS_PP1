@@ -1,0 +1,344 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 3 Programming Assignment</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// NOTE: You must implement the data structures using the no prototype approach.
+//       This is what the book uses, so you can copy it.
+//       See also: https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+
+// NOTE: Please review the following links regularly:
+//       https://it.pointpark.edu/tutorials/arrays-vs-objects/
+//       https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+//       https://it.pointpark.edu/tutorials/implementation-vs-interface/
+
+
+
+//--------------------------------//
+// The linked list data structure //
+//--------------------------------//
+console.log("The linked list data structure");
+
+// 1. Suppose you have an array with 1,000 elements and a linked list with 1,000
+//    elements. For both data structures, you want to retrieve the last entry.
+//    Does one data structure complete that operation before the other (i.e.,
+//    is it faster)? If yes, how much faster? If no, why does it take the same
+//    amount of time?
+/*
+yes, an array is faster because it can be randomly accessed by the last index, and a linked list has to run through every element until it finds the last one. 
+an array would take 0(1) time, and a linked list would take 0(n) time, where n is the number of elements in this case 1000, the linked list would take 1000x longer. 
+*/
+
+
+//------------------------//
+// Creating a linked list //
+//------------------------//
+console.log("Creating a linked list");
+
+// We are going to implement the linked list data structure described in the
+// book. Instead of using 'let' we use 'var' everywhere. Note that this
+// implementation does not use the prototype (see homework). Here is a skeleton
+// that we will work on completing:
+
+function LinkedList() {
+
+  // helper class
+  function Node(element) {
+    this.element = element;
+    this.next = null;
+  }
+
+  // store length and head
+  var length = 0;
+  var head = null;
+
+
+
+  this.append = function(element) {
+    var node = new Node(element);
+    if(head === null) {
+      head = node;
+    } else {
+      var currentNode = head;
+      while(currentNode.next) {
+        currentNode = currentNode.next;
+      }
+      currentNode.next = node;
+    }
+    length++;
+  };
+  
+
+  this.insert = function(index, element) {
+    var node = new Node(element);
+    var currentNode = head;
+    var previousNode;
+    var currentIndex = 0;
+
+    if (index < 0 || index > length) {
+      return false;
+    }
+    if (index === 0) {
+      node.next = currentNode;
+      head = node;
+    } else {
+      while (currentIndex < index) {
+        currentIndex++;
+        previousNode = currentNode;
+        currentNode = currentNode.next;
+      }
+      node.next = currentNode;
+      previousNode.next = node;
+    }
+    length++;
+  };
+
+
+
+  this.removeAt = function(index) {
+    var currentNode = head;
+    var previousNode;
+    var currentIndex = 0;
+    if (index < 0 || index >= length) {
+      return null;
+    }
+    if (index === 0) {
+      head = currentNode.next;
+    } else {
+      while (currentIndex < index) {
+        currentIndex++;
+        previousNode = currentNode;
+        currentNode = currentNode.next;
+      }
+      previousNode.next = currentNode.next;
+    }
+    length--;
+    return currentNode.element;
+  };
+
+  this.remove = function(element) {
+    var currentNode = head;
+    var previousNode;
+    if(currentNode.element === element) {
+      head = currentNode.next;
+    } else {
+      while(currentNode.element !== element) {
+        previousNode = currentNode;
+        currentNode = currentNode.next;
+      }
+      previousNode.next = currentNode.next;
+    }
+    length--;
+    };
+
+
+
+
+
+  this.indexOf = function(element) {
+    var currentNode = head;
+    var index = -1;
+
+    while(currentNode) {
+      index++;
+      if (currentNode.element === element) {
+        return index;
+      }
+        currentNode = currentNode.next;
+    }
+    return -1;
+  };
+
+
+
+
+
+  this.isEmpty = function() {
+    return length === 0;
+  };
+
+
+
+
+
+  this.size = function() {
+    return length;
+  };
+
+
+
+
+  this.getHead = function() {
+   return head;
+  }
+
+  this.toString = function() {
+    // overwrite the default toString method
+    var current = head;
+    var string = "List: ";
+    while (current) {
+      string += current.element + (current.next ? " -> " : "");
+      current = current.next;
+    }
+    return string;
+  };
+
+  this.print = function() {
+    // print to the console
+    console.log(this.toString());
+  };
+
+  
+// declaring clear first to empty linked list for each test.
+
+this.clear = function() {
+  head = null;
+  length = 0;
+}
+
+
+}
+
+
+// create a linked list to operate on
+
+var list = new LinkedList();
+
+
+
+/*
+// 1. Write pseudo code (meaning; use comments) to describe how you would
+//    implement the append method. HINT: What two scenarios can you distinguish?
+
+1.
+A: Append method:
+- Create new node from the element
+- Two Scenarios:
+  a. If list is empty, then head is null
+    set new node as head
+  b. If list isn't empty, loop until we find last node where .next is null, then set last node's .next to new node
+        Either way increment length by 1
+
+B: Insert method:
+- create a new node from the element
+- if the index is out of range, return false
+- Two Scenarios:
+  a. If index is 0, set teh new nodes .next to teh current head, then make the new node the head
+  b. if index is not 0, loop through nodes to find position where next element is target, then set new node in between:
+  previousNode.next = newNode, newNode.next = currentNode
+        Either way increment length by 1
+
+C: RemoveAt method:
+- If the index is out of range, return null
+- Two Scenarios:
+  a. If index is 0, set head to current head's .next
+  b. If index isn't 0, loop through nodes to find position where next element is target, then set previousNode.next to currentNode.next
+        Either way decrement length by 1 & return currentNode.element
+
+
+D: Remove method:
+- Two Scenarios:
+  a. If head node matches, set head to head.next
+  b. If head node doesn't match, loop through nodes to find position where element is target, then set previousNode.next to currentNode.next
+        Either way decrement length by 1
+
+E: IndexOf method:
+- Loop through nodes, when element is found, return index, if not found return -1
+
+F: IsEmpty method:
+- return true if length is 0, otherwise return false
+
+G: Size method:
+- return length
+
+H: GetHead method:
+- return head
+
+*/
+
+
+// 2. Translate your pseudo code into actual code and test it.
+//    HINT: Use list.print() to test your code.
+
+list.append("Cam");
+list.append("Jordan");
+list.append("Scully");
+list.append("Binx");
+list.print();
+
+
+
+list.clear();
+
+// 3. Repeat (1) and (2) for insert.
+
+list.insert(0, "Cam");
+list.insert(1, "Jordan");
+list.insert(2, "Scully");
+list.insert(3, "Binx");
+list.print();
+
+
+// 4. Repeat (1) and (2) for removeAt.
+
+list.removeAt(0);
+list.removeAt(1);
+list.print();
+// should print "List: Jordan -> Binx"
+
+
+// 5. Repeat (1) and (2) for remove.
+
+list.remove("Jordan");
+list.print();
+// should print "List: Binx"
+
+list.clear();
+
+// 6. Repeat (1) and (2) for indexOf.
+
+list.append("Cam");
+list.append("Jordan");
+list.append("Scully");
+list.append("Binx");
+console.log(list.indexOf("Cam")); // should print 0
+console.log(list.indexOf("Jordan")); // should print 1
+
+list.clear();
+
+// 7. Repeat (1) and (2) for isEmpty.
+
+list.isEmpty();
+console.log(list.isEmpty()); // should print true
+
+list.clear();
+
+// 8. Repeat (1) and (2) for size.
+
+list.append("a");
+list.append("b");
+list.append("c");
+console.log(list.size()); // should print 3
+
+
+list.clear();
+
+// 9. Repeat (1) and (2) for getHead.
+
+list.append("a");
+list.append("b");
+console.log(list.getHead()); // should print node containing "a"
+
+
+list.clear();
+
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
