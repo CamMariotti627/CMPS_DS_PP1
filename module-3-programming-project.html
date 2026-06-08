@@ -139,7 +139,6 @@ LinkedList.prototype.indexOf = function(element) {
   var currentNode = this.head;
   var index = 0;
   while (currentNode) {
-    index++;
     if (currentNode.element === element) {
       return index;
     }
@@ -173,6 +172,8 @@ LinkedList.prototype.getNodeAt = function(position) {
     if (index === position) {
       return currentNode;
     }
+    index++;
+    currentNode = currentNode.next;
   }
   return null;
 };
@@ -183,8 +184,9 @@ LinkedList.prototype.appendNode = function(node) {
   } else {
     var currentNode = this.head;
     while (currentNode.next) {
+      currentNode = currentNode.next
     }
-    currentNode = currentNode.next;
+    currentNode.next = node;
   }
 };
 
@@ -263,7 +265,7 @@ list1.getNodeAt(3);
 // 4. Implement an appendNode(node) method (using the prototype) that appends a
 //    node to a linked list (as opposed to an element!).
 
-List1.appendNode(list1.getNodeAt(1)); 
+list1.appendNode(list1.getNodeAt(1)); 
 
 
 // 5. Uncomment the lines below and make sure the correct directions are
@@ -312,3 +314,4 @@ LinkedList.prototype.size = function() {
   See console!
 </body>
 </html>
+
