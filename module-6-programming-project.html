@@ -1,0 +1,227 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 6 Programming Project</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// NOTE: You must implement the data structures using the prototype approach.
+//       This is not what the book uses, so you have to convert it.
+//       See also: https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+
+// NOTE: Please review the following links regularly:
+//       https://it.pointpark.edu/tutorials/arrays-vs-objects/
+//       https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+//       https://it.pointpark.edu/tutorials/implementation-vs-interface/
+
+
+
+//---------//
+// Project //
+//---------//
+console.log("Project");
+
+// 1. Implement the ArrayList using the prototype.
+
+function ArrayList() {
+  this.array = [];
+}
+
+ArrayList.prototype.insert = function(item) {
+  this.array.push(item);
+};
+
+ArrayList.prototype.toString = function() {
+  return this.array.join(", ");
+};
+
+//test for arraylist:
+
+var testList = new ArrayList();
+testList.insert(3);
+testList.insert(1);
+testList.insert(2);
+console.log("1. ArrayList", testList.toString()); 
+// should read 3, 1, 2
+
+
+// 2. Complete the createNonSortedRandomArray(size) below by returning an
+//    ArrayList with the numbers 1, 2, ..., size in random order.
+//    NOTE: there are multiple ways to achieve this.
+
+function createNonSortedRandomArray(size) {
+  var nums = [];
+  for (var i = 1; i<= size; i++) {
+    nums.push(i);
+  }
+// step 2: fisher yates shuffle
+  for (var i = nums.length -1; i > 0; i--) {
+    var randomIndex = Math.floor(Math.random() * (i + 1)); 
+  //pick index 0... i, swap nums[i] and nums[randomIndex]
+  var temp = nums[i];
+  nums[i] = nums[randomIndex];
+  nums[randomIndex] = temp;
+  }
+  var list = new ArrayList();
+  for (var i = 0; i < nums.length; i++) {
+    list.insert(nums[i]);
+  }
+
+  return list;
+}
+
+
+//test:
+
+var randomArray = createNonSortedRandomArray(10);
+console.log("2. Random (unsorted) ArrayList:", randomArray.toString());
+
+
+// 3. Implement the Quick Sort algorithm and test your code with the function
+//    you wrote for (2).
+
+function quickSortHelper(arr) {
+  if (arr.length <= 1) {
+    return arr;
+  }
+  var pivotIndex = Math.floor(arr.length / 2);
+  var pivot = arr[pivotIndex];
+
+  var left = [];
+  var middle = [];
+  var right = [];
+
+  for (var i = 0; i < arr.length; i++) {
+    if      (arr[i] < pivot) left.push(arr[i]);
+    else if (arr[i] > pivot) right.push(arr[i]);
+    else    middle.push(arr[i]);
+  }
+  return quickSortHelper(left).concat(middle, quickSortHelper(right));
+}
+
+ArrayList.prototype.quickSort = function() {
+  this.array = quickSortHelper(this.array);
+};
+
+//test w previous random array
+
+console.log("3. Before Quick Sort:", randomArray.toString());
+randomArray.quickSort();
+console.log("3. After Quick Sort:", randomArray.toString());
+
+
+// 4. Implement searching using the prototype.
+
+
+ArrayList.prototype.sequentialSearch = function(item) {
+  for (var i = 0; i < this.array.length; i++) {
+    if (this.array[i] === item) {
+      return i;
+    }
+  }
+  return -1;
+};
+
+// test
+
+var searchTest = new ArrayList();
+searchTest.insert("apple");
+searchTest.insert("banana");
+searchTest.insert("cherry");
+console.log("4. Sequential search 'banana': ", searchTest.sequentialSearch("banana"));
+console.log("4. Sequential search 'mango':", searchTest.sequentialSearch("mango")); 
+
+// 5. Implement the binary search algorithm and test your code.
+
+ArrayList.prototype.binarySearch = function(item) {
+  var low = 0;
+  var high = this.array.length - 1;
+
+  while (low <= high) {
+    var mid = Math.floor((low + high) / 2);
+    if (htis.array[mid] === item) {
+      return mid;
+    }else if (htis.array[mid] < item) {
+      low = mid + 1;
+    }else {
+      high = mid -1;
+    }
+  }
+
+  return -1;
+};
+
+console.log("5. Binary search for 5 in sorted array:", randomArray.binarySearch(5));
+console.log("5. Binary search for 99 in sorted array:", randomArray.binarySearch(99));
+
+
+
+
+// The following set of steps come from an earlier homework.
+// The following text is from the all the Amendments in the Bill of Rights.
+var text = "Congress shall make no law respecting an establishment of religion, or prohibiting the free exercise thereof; or abridging the freedom of speech, or of the press; or the right of the people peaceably to assemble, and to petition the Government for a redress of grievances. A well regulated Militia, being necessary to the security of a free State, the right of the people to keep and bear Arms, shall not be infringed. No Soldier shall, in time of peace be quartered in any house, without the consent of the Owner, nor in time of war, but in a manner to be prescribed by law. The right of the people to be secure in their persons, houses, papers, and effects, against unreasonable searches and seizures, shall not be violated, and no Warrants shall issue, but upon probable cause, supported by Oath or affirmation, and particularly describing the place to be searched, and the persons or things to be seized. No person shall be held to answer for a capital, or otherwise infamous crime, unless on a presentment or indictment of a Grand Jury, except in cases arising in the land or naval forces, or in the Militia, when in actual service in time of War or public danger; nor shall any person be subject for the same offence to be twice put in jeopardy of life or limb; nor shall be compelled in any criminal case to be a witness against himself, nor be deprived of life, liberty, or property, without due process of law; nor shall private property be taken for public use, without just compensation. In all criminal prosecutions, the accused shall enjoy the right to a speedy and public trial, by an impartial jury of the State and district wherein the crime shall have been committed, which district shall have been previously ascertained by law, and to be informed of the nature and cause of the accusation; to be confronted with the witnesses against him; to have compulsory process for obtaining witnesses in his favor, and to have the Assistance of Counsel for his defence. In Suits at common law, where the value in controversy shall exceed twenty dollars, the right of trial by jury shall be preserved, and no fact tried by a jury, shall be otherwise re-examined in any Court of the United States, than according to the rules of the common law. Excessive bail shall not be required, nor excessive fines imposed, nor cruel and unusual punishments inflicted. The enumeration in the Constitution, of certain rights, shall not be construed to deny or disparage others retained by the people. The powers not delegated to the United States by the Constitution, nor prohibited by it to the States, are reserved to the States respectively, or to the people.";
+// First we make the text lower case.
+text = text.toLowerCase();
+// Then we remove punctuation by using a regular expression.
+text = text.replace(/[.,;]/g, "");
+// And store the words into an array.
+var textArray = text.split(" ");
+
+
+//setup for next 3 questions:
+
+var wordList = new ArrayList();
+for (var i = 0; i < textArray.length; i++) {
+  wordList.insert(textArray[i]);
+}
+wordList.quickSort(); // alpha search before binary
+console.log("Sorted word list (first 10):", wordList.array.slice(0,10));
+
+// 6. Use sorting and searching to find out whether the word 'president'
+//    appears in the amendments. You should use the code you wrote above.
+
+
+var presentIndex = wordList.binarySearch("president");
+if (presidentIndex !== -1) {
+  console.log("6. 'president FOUND at index", presidentIndex, "in the amendments.");
+} else {
+  console.log("6. 'president' NOT FOUND in amendments.");
+}
+// "president" is not found in BOR should return NOT FOUND
+////////////////////////////////////////////////////
+
+// 7. Use sorting and searching to find out whether the word 'state' appears
+//    in the amendments. You should use the code you wrote above.
+
+var stateIndex = wordList.binarySearch("state");
+if (stateIndex !== -1) {
+  console.log("7. 'state' FOUND at index", stateIndex, "in the amendments.");
+} else {
+  console.log("7. 'state' NOT FOUND in amendments.");
+}
+
+// "state" is in amendments multiple times, should return FOUND & index.
+///////////////////////////////////////////////////
+
+
+// 8. Use sorting and searching to find out whether the word 'country' appears
+//    in the amendments. You should use the code you wrote above.
+
+var countryIndex = wordlist.binarySearch("country");
+if (countryIndex !== -1) {
+  console.log("8. 'country' FOUND at index", countryIndex, "in the amendments.");
+} else {
+  console.log("8. 'country' NOT FOUND in amendments.");
+}
+
+// "country" not written in BOR, should return NOT FOUND
+
+
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
