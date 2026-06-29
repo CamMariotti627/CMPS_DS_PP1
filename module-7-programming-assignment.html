@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 7 Programming Assignment</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// NOTE: You must implement the data structures using the no prototype approach.
+//       This is what the book uses, so you can copy it.
+//       See also: https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+
+// NOTE: Please review the following links regularly:
+//       https://it.pointpark.edu/tutorials/arrays-vs-objects/
+//       https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+//       https://it.pointpark.edu/tutorials/implementation-vs-interface/
+
+
+
+//-----------//
+// Recursion //
+//-----------//
+console.log("Recursion");
+
+// 1. Implement fibonnacci using a recursive function and test your code.
+
+function fibRecursive(n) {
+  if (n <= 0) return 0;
+  if (n === 1) return 1;
+  return fibRecursive(n -1) + fibRecursive(n - 2);
+}
+console.log("Recursion");
+consolelog("fib(0):", fibRecursive(0));
+consolelog("fib(1):", fibRecursive(1));
+consolelog("fib(6):", fibRecursive(6));
+consolelog("fib(10):", fibRecursive(10));
+var terms = [];
+for (var i = 0; i < 10; i++) terms.push(fibRecursive(i));
+console.log("First 10 terms:", terms);
+
+
+
+//---------------------//
+// Dynamic programming //
+//---------------------//
+console.log("Dynamic programming");
+
+// 1. Implement the minimum coin change problem using dynamic programming.
+//    Test your code.
+
+function minCoinChangeDP(coins, amount) {
+  var dp = [], used = [];
+  for (var i = 0; i <= amount; i++) { dp[i] = Infinity; used[i] = -1; }
+  dp[0] = 0;
+  for (var i = 1; i <= amount; i++) {
+    for (var j = 0; j < coins.length; j++) {
+      var coin = coins[j];
+      if (coin <= i && dp[i - coin] + 1 < dp[i]) {
+        dp[i] = dp[i - coin] + 1;
+        used[i] = coin;
+      }
+    }
+  }
+  if (dp[amount] === Infinity) return null;
+  var result = [], remaining = amount;
+  while (remaining > 0) { result.push(used[remaining]);
+    remaining -= used[remaining]; }
+    return { count: dp[amount], coins: result };
+}
+console.log("Dynamic programming");
+var usCoins = [1, 5, 10, 25];
+var r1 = minCoinChangeDP(usCoins, 36);
+console.log("DP - 36 cents in US currency:", r1.coins, "(" + r1.count + "coins)");
+var trickyCoins = [1, 3, 4];
+var r2 = minCoinChangeDP(trickyCoins, 6);
+console.log("DP - 6 with [1,3,4]:", r2.coins, "(" + r2.count + " coins)");
+var r3 = minCoinChangeDP(usCoins, 11);
+console.log("DP - 11 cents in US currency:", r3.coins, ")" + r3.count + " coins)");
+
+
+
+
+//-------------------//
+// Greedy algorithms //
+//-------------------//
+console.log("Greedy algorithms");
+
+// 1. Implement the minimum coin change problem using a greedy algorithm.
+//    Test your code.
+
+function minCoinChangeGreedy(coins, amount) {
+  var sortedCoins = coins.slice().sort(function(a, b) {
+    return b-a; });
+    var result = [], remaining = amount;
+    for (var i = 0; i < sortedCoins.length; i++) {
+      while (remaining >= sortedCoins[i]) {
+        result.push(sortedCoins[i]);
+        remaining -= sortedCoins[i];
+      }
+    }
+    if (remaining > 0) return null;
+    return { count: result.length, coins: result };
+}
+console.log("Greedy algorithms");
+var g1 = minCoinChangeGreedy(usCoins, 36);
+console.log("Greedy - 36 cents US currency:", g1.coins, "(" + g1.count + " coins");
+var g2 = minCoinChangeGreedy(trickyCoins, 6);
+console.log("Greedy - 6 with [1,3,4];", g2.coins, "(" + g2.count + " coins)");
+var g3 = minCoinChangeGreedy(usCoins, 11);
+console.log("Greedy - 11 cents US currency:", g3.coins, "(" + g3.count + " coins)");
+
+
+
+
+
+//----------------------------------------//
+// Introduction to functional programming //
+//----------------------------------------//
+console.log("Introduction to functional programming");
+
+// 1. Solve the problem of obtaining all the positive numbers in an array using
+//    imperative style.
+
+
+function getPositivesImperative(arr) {
+  var result = [];
+  for (var i = 0; i < arr.length; i++) { if (arr[i] > 0)
+    result.push(arr[i]); }
+  return result;
+}
+
+
+
+
+
+// 2. Solve the problem of obtaining all the positive numbers in an array using
+//    functional style.
+
+
+function getPositivesFunctional(arr) {
+  return arr.filter(function(val) { return val > 0; });
+}
+console.log("Introduction to functional programming");
+var mixed = [3, -1, 0, 7, -4, 2, -9, 5];
+console.log("Imperative positives:", getPositivesImperative(mixed));
+console.log("Functional positives:", getPositivesFunctional(mixed));
+
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
