@@ -57,7 +57,7 @@ function MinStack() {
 
   this.pop = function() {
     var val = this.stack.pop();
-    if (val === htis.minStack[this.minStack.length -1])
+    if (val === this.minStack[this.minStack.length -1])
     this.minStack.pop();
   return val;
   };
