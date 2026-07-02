@@ -1,0 +1,159 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CMPS 260: Module 8 Programming Project</title>
+<style>* { font-family: monospace; }</style>
+<script>
+
+// NOTE: You must implement the data structures using the prototype approach.
+//       This is not what the book uses, so you have to convert it.
+//       See also: https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+
+// NOTE: Please review the following links regularly:
+//       https://it.pointpark.edu/tutorials/arrays-vs-objects/
+//       https://it.pointpark.edu/tutorials/no-prototype-vs-prototype/
+//       https://it.pointpark.edu/tutorials/implementation-vs-interface/
+
+
+
+//---------//
+// Project //
+//---------//
+console.log("Project");
+
+// 1. What is the worst case complexity of the following function?
+
+function hasDuplicates(arr) {
+  for (var i = 0; i < arr.length; i++) {
+    for (var j = 0; j < arr.length; j++) {
+      if (i !== j && arr[i] === arr[j]) {
+        return true;
+      }
+    }
+  }
+  return false;
+}
+console.log("Q1 hasDuplicates([1,2,3,1]):", hasDuplicates([1,2,3,1]));
+//true
+console.log("Q1 hasDuplicates([1,2,3]):", hasDuplicates([1,2,3,4]));
+//false
+
+// 2. Implement a faster version of the same function and analyze the
+//    complexity of this approach.
+
+function hasDuplicatesFast(arr) {
+  var seen = new Set();
+  for (var i = 0; i < arr.length; i++) {
+    if (seen.has(arr[i])) 
+    return true;
+  seen.add(arr[i]);
+  }
+  return false;
+}
+console.log("Q2 hasDuplicatesFast([1,2,3,4]):", hasDuplicatesFast([1,2,3,4]));
+// false
+console.log("Q2 hasDuplicatesFast([1,2,3,1]):", hasDuplicatesFast([1,2,3,1]));
+// true 
+console.log("Q2 hasDuplicatesFast(['a','b','a']):", hasDuplicatesFast(['a','b','a']));
+// true
+console.log("Q2 hasDuplicatesFast([]):", hasDuplicatesFast([]));
+// false 
+
+
+// 3. The travelling salesman problem is a another classic problem and we are
+//    going to solve it using a greedy algorithm. Before starting, please read
+//    through the article on Wikipedia:
+//      https://en.wikipedia.org/wiki/Travelling_salesman_problem
+//    Then implement the following:
+//    (a) Create a graph that represents the example symmetric TSP problem on
+//        the Wikipedia page.
+//    (b) Implement a greedy search that finds the shortest path. You should
+//        have the following steps: (1) pick node A as the starting position,
+//        (2) pick the closest neighbor that has not been visited as the next
+//        city to visit, (3) continue this process until returning to A,
+//        (4) print the final length of the path and also the sequence of
+//        the cities.
+//    (c) Check your results, do they make sense? Is is the optimal solution?
+
+var cityNames = ["A", "B", "C", "D", "E", "F"];
+var graph = [
+  [0, 20, 42, 35],
+  [20, 0, 30, 34],
+  [42, 30, 0, 12],
+  [35, 34, 12, 0]
+];
+function greedyTSP(graph, start) {
+  var n = graph.length, visited = [], path = [], total = 0;
+  for (var i = 0; i < n; i++) visited[i] = false;
+  var current = 0;
+  visited[0] = true;
+  path.push(cityNames[0]);
+  for (var step = 0; step < n -1; step++) {
+    var nearestDist = Infinity, nearestCity = -1;
+    for (var j = 0; j < n; j++) {
+      if (!visited[j] && graph[current][j] < nearestDist) {
+        nearestDist = graph[current][j]; nearestCity = j;
+      }
+    }
+    visited[nearestCity] = true;
+    path.push(cityNames[nearestCity]);
+    total += nearestDist;
+    current = nearestCity;
+  }
+  total += graph[current][0];
+  path.push(cityNames[0]);
+  return { path: path, total: total };
+}
+var tspResult = greedyTSP(graph, cityNames);
+console.log("Q3 Greedy TSP path: ", tspResult.path.join(" -> "));
+console.log("Q3 Greedy TSP total distance: ", tspResult.total);
+
+
+
+
+
+// 4. Solve https://csacademy.com/contest/interview-archive/task/intersecting-rectangles/
+//    What is the runtime complexity of your solution?
+//    HINT: Try to break down the problems into smaller steps. For example,
+//          find a convenient way to represent rectangles and define a function
+//          that tests whether one rectangle is inside another. Then test your
+//          code on just two rectangles first to make sure it works.
+
+
+function makeRectangle(x1, y1, x2, y2) {
+  return { x1: x1, y1: y1, x2: x2, y2: y2 };
+}
+function intersect(r1, r2) {
+  if (r1.x2 <= r2.x1) return false;
+  if (r1.x1 >= r2.x2) return false;
+  if (r1.y2 <= r2.y1) return false;
+  if (r1.y1 >= r2.y2) return false;
+  return true;
+}
+function countIntersections(rectangles) {
+  var count = 0;
+  for (var i = 0; i < rectangles.length; i++) 
+    for (var j = i + 1; j < rectangles.length; j++) 
+      if (intersect(rectangles[i], rectangles[j])) 
+        count++;
+  return count;
+}
+var rectangleA = makeRectangle(0, 0, 4, 4), rectangleB = makeRectangle(2, 2, 6, 6), rectangleC = makeRectangle(5, 5, 8, 8);
+console.log("Q4 A∩B (true): ", intersect(rectangleA, rectangleB));
+console.log("Q4 A∩C (false): ", intersect(rectangleA, rectangleC));
+console.log("Q4 B∩C (true): ", intersect(rectangleB, rectangleC));
+var rectangles = [rectangleA, rectangleB, rectangleC];
+console.log("Q4 Count of intersections (2): ", countIntersections(rectangles));
+// 2
+
+
+
+
+
+</script>
+</head>
+<body>
+  See console!
+</body>
+</html>
