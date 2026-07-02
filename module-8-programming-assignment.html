@@ -119,7 +119,7 @@ function euler2(limit) {
   while (curr <= limit) {
     if (curr % 2 === 0) sum += curr;
     var next = prev + curr;
-    prev = cur;
+    prev = curr;
     curr = next;
   }
   return sum;
